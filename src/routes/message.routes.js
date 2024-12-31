@@ -4,7 +4,7 @@ import { getMessages, getUsersForSiebar, sendMessage } from "../controller/messa
 
 const router = express.Router();
 
-router.get("users", protectRoute, getUsersForSiebar);
+router.get("/users", protectRoute, getUsersForSiebar);
 router.get("/:id", protectRoute, getMessages);
 
 router.post("/send/:id",protectRoute,sendMessage);
