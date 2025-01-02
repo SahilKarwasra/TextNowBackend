@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
@@ -12,7 +12,7 @@ const messageSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    Text: {
+    text: {
       type: String,
     },
     image: {
