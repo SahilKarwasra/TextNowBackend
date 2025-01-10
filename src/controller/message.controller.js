@@ -20,7 +20,10 @@ export const getUsersForSiebar = async (req, res) => {
 
 export const getMessages = async (req, res) => {
   try {
+    console.log("getMessages function called"); 
+
     const { id: userToChatId } = req.params;
+
     const myId = req.user._id;
 
     const messages = await Message.find({
@@ -29,10 +32,11 @@ export const getMessages = async (req, res) => {
         { senderId: userToChatId, receiverId: myId },
       ],
     });
+    // console.log("messages found:", messages); // Log the messages
 
     res.status(200).json(messages);
   } catch (error) {
-    console.log("Error in getMessage Controller", error.message);
+    console.log("Error in getMessages Controller:", error.message); // Log error message
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
