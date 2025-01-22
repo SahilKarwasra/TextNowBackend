@@ -2,7 +2,8 @@ import cloudinary from "../lib/cloudinary.js";
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 
-import { getReceiverSocketId, io } from "../lib/socket.js";
+import { getReceiverSocketId, io} from "../lib/socket.js";
+import { getGeminiAIResponse } from "../lib/googleGenerativeAIClient.js";
 
 export const getUsersForSiebar = async (req, res) => {
   try {
@@ -74,5 +75,21 @@ export const sendMessage = async (req, res) => {
   } catch (error) {
     console.log("Error in sendMessage Controller", error.message);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const generateText = async (req, res) => {
+  const { message } = req.body;
+
+  if (!message) {
+    return res.status(400).json({ error: "Message is required" });
+  }
+
+  try {
+    const response = await getGeminiAIResponse(message);
+    res.status(200).json({ response });
+  } catch (error) {
+    console.error("Error in Generating Text:", error);
+    res.status(500).json({ error: "Failed to generate text" });
   }
 };
