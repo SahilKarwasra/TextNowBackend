@@ -70,6 +70,18 @@ export const sendMessage = async (req, res) => {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }
 
+    await User.findByIdAndUpdate(senderId, {
+      lastMessage: messageContent,
+      isSeen: true,
+    });
+
+    // Update receiver's last message and mark as unseen
+    await User.findByIdAndUpdate(receiverId, {
+      lastMessage: messageContent,
+      isSeen: false,
+    });
+
+
     res.status(201).json(newMessage);
 
   } catch (error) {
