@@ -20,14 +20,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    lastMessage: {
-      type: String,
-      default: ""
-    },
-    isSeen: {
-      type: Boolean,
-      default: false
-    }
   },
   { timestamps: true }
 );
