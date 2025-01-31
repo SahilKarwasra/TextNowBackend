@@ -8,11 +8,40 @@ import { getGeminiAIResponse } from "../lib/googleGenerativeAIClient.js";
 export const getUsersForSiebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
-    const filteredUsers = await User.find({
+    const allUsers  = await User.find({
       _id: { $ne: loggedInUserId },
     }).select("-password");
 
-    res.status(200).json(filteredUsers);
+    const usersWithLastMessage = await Promise.all(
+      allUsers.map(async (user) => {
+        // Find the last message between logged-in user and this user
+        const lastMessage = await Message.findOne({
+          $or: [
+            // Messages where logged-in user is sender and this user is receiver
+            { senderId: loggedInUserId, receiverId: user._id },
+            // Messages where this user is sender and logged-in user is receiver
+            { senderId: user._id, receiverId: loggedInUserId }
+          ]
+        })
+        .sort({ createdAt: -1 }) // Sort by newest first
+        .limit(1); // Get only the most recent message
+
+        // Return user data with last message
+        return {
+          _id: user._id,
+          username: user.username,
+          profilePic: user.profilePic,
+          lastMessage: lastMessage ? {
+            text: lastMessage.text,
+            image: lastMessage.image,
+            createdAt: lastMessage.createdAt,
+            isSeen: lastMessage.isSeen
+          } : null
+        };
+      })
+    );
+
+    res.status(200).json(usersWithLastMessage);
   } catch (error) {
     console.log("Error in getting users", error.message);
     res.status(500).json({ error: "Internal Server Error" });
