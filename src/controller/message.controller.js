@@ -2,35 +2,33 @@ import cloudinary from "../lib/cloudinary.js";
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 
-import { getReceiverSocketId, io} from "../lib/socket.js";
+import { getReceiverSocketId, io } from "../lib/socket.js";
 import { getGeminiAIResponse } from "../lib/googleGenerativeAIClient.js";
 
 export const getUsersForSiebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
-    const allUsers  = await User.find({
-      _id: { $ne: loggedInUserId },
-    }).select("-password");
 
+    // 1. Get all users except logged-in user
+    const allUsers = await User.find({ _id: { $ne: loggedInUserId } })
+                               .select("-password");
+
+    // 2. For each user, find the last message in your conversation
     const usersWithLastMessage = await Promise.all(
       allUsers.map(async (user) => {
         // Find the last message between logged-in user and this user
         const lastMessage = await Message.findOne({
           $or: [
-            // Messages where logged-in user is sender and this user is receiver
             { senderId: loggedInUserId, receiverId: user._id },
-            // Messages where this user is sender and logged-in user is receiver
             { senderId: user._id, receiverId: loggedInUserId }
           ]
         })
-        .sort({ createdAt: -1 }) // Sort by newest first
-        .limit(1); // Get only the most recent message
+        .sort({ createdAt: -1 })
+        .limit(1);
 
-        // Return user data with last message
+        // Return full user object with last message added
         return {
-          _id: user._id,
-          username: user.username,
-          profilePic: user.profilePic,
+          ...user._doc,  // Spread all user properties
           lastMessage: lastMessage ? {
             text: lastMessage.text,
             image: lastMessage.image,
@@ -50,7 +48,7 @@ export const getUsersForSiebar = async (req, res) => {
 
 export const getMessages = async (req, res) => {
   try {
-    console.log("getMessages function called"); 
+    console.log("getMessages function called");
 
     const { id: userToChatId } = req.params;
 
@@ -94,13 +92,12 @@ export const sendMessage = async (req, res) => {
     await newMessage.save();
 
     // Realtime Updation using Socket.io
-    const receiverSocketId = getReceiverSocketId(receiverId)
+    const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }
 
     res.status(201).json(newMessage);
-
   } catch (error) {
     console.log("Error in sendMessage Controller", error.message);
     res.status(500).json({ error: "Internal Server Error" });
