@@ -13,22 +13,18 @@ export const getUsersForSiebar = async (req, res) => {
     const allUsers = await User.find({ _id: { $ne: loggedInUserId } })
                                .select("-password");
 
-    // 2. For each user, find the last message in your conversation
+    // 2. For each user, find the last message in the conversation
     const usersWithLastMessage = await Promise.all(
       allUsers.map(async (user) => {
-        // Find the last message between logged-in user and this user
         const lastMessage = await Message.findOne({
           $or: [
             { senderId: loggedInUserId, receiverId: user._id },
             { senderId: user._id, receiverId: loggedInUserId }
           ]
-        })
-        .sort({ createdAt: -1 })
-        .limit(1);
+        }).sort({ createdAt: -1 });
 
-        // Return full user object with last message added
         return {
-          ...user._doc,  // Spread all user properties
+          ...user.toObject(),  // Ensure serialization
           lastMessage: lastMessage ? {
             text: lastMessage.text,
             image: lastMessage.image,
@@ -45,6 +41,7 @@ export const getUsersForSiebar = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 export const getMessages = async (req, res) => {
   try {
