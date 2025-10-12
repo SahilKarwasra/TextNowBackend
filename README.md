@@ -1,54 +1,4 @@
-# TextNow Backend
 
-TextNow is a messaging application backend built with Node.js, Express.js, and MongoDB. This backend supports features such as user authentication, real-time messaging, and media storage via Cloudinary.
-
-## Features
-- User authentication with JWT.
-- Secure MongoDB database integration.
-- Cloudinary for media uploads and storage.
-- Real-time communication using WebSockets(Socket.IO).
-- Scalable architecture for development and production environments.
-
-## Prerequisites
-Ensure you have the following installed on your system:
-
-- [Node.js](https://nodejs.org/) (v14 or later)
-- [MongoDB](https://www.mongodb.com/atlas/database) (Atlas or local instance)
-
-## Getting Started
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/SahilKarwasra/TextNowBackend.git
-cd textnow-backend
-```
-
-### 2. Install Dependencies
-```bash
-npm install
-```
-
-### 3. Configure Environment Variables
-Create a `.env` file in the root directory and add the following environment variables:
-
-```env
-MONGO_URI = *
-PORT = 5001
-JWT_SECRET = *
-NODE_ENV = *
-CLOUDINARY_CLOUD_NAME = *
-CLOUDINARY_API_KEY = *
-CLOUDINARY_API_SECRET = *
-```
-> **Note:** Replace sensitive values like `JWT_SECRET` and `CLOUDINARY_API_SECRET` with your secure credentials.
-
-### 4. Run the Server
-```bash
-npm start
-```
-The server will start on `http://localhost:5001` by default.
-
-## API Endpoints
 
 # TextNow Backend
 
@@ -84,13 +34,13 @@ npm install
 Create a `.env` file in the root directory and add the following environment variables:
 
 ```env
-MONGO_URI = mongodb+srv://sahilkarwasra11:FTf8DjmyR1m9UOEo@chatapp.wxzk5.mongodb.net/chat_db?retryWrites=true&w=majority&appName=ChatApp
+MONGO_URI = mongodb+srv://sahilkarwasra11:FTf8DjmyR1m9Eo@chatapp.wxzk5.mongodb.net/chat_db?retryWrites=true&w=majority&appName=ChatApp
 PORT = 5001
 JWT_SECRET = MYSECRET
 NODE_ENV = development
-CLOUDINARY_CLOUD_NAME = dussx35i5
-CLOUDINARY_API_KEY = 376819987198266
-CLOUDINARY_API_SECRET = KP4QIfnCvLEfVSvNIjzZM8PNxJ4
+CLOUDINARY_CLOUD_NAME = dussi5
+CLOUDINARY_API_KEY = 3768199871986
+CLOUDINARY_API_SECRET = KP4QIfnCvLEfVSzZM8PNxJ4
 ```
 > **Note:** Replace sensitive values like `JWT_SECRET` and `CLOUDINARY_API_SECRET` with your secure credentials.
 
